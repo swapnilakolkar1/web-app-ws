@@ -27,7 +27,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		//configure http API endpoints
 		http.csrf().disable().authorizeRequests()
 		.antMatchers(HttpMethod.POST,SecurityConstants.SIGN_UP_URL).permitAll()
-		.anyRequest().authenticated().and().addFilter(new AuthenticationFilter(authenticationManager()));
+		.anyRequest().authenticated().and().addFilter(getAuthenticationFilter());
+	}
+	//Sets the URL that determines if authentication is required
+	private AuthenticationFilter getAuthenticationFilter() throws Exception {
+		AuthenticationFilter filter=new AuthenticationFilter(authenticationManager());
+		filter.setFilterProcessesUrl("/users/login");
+		return filter;
 	}
 
 	@Override
