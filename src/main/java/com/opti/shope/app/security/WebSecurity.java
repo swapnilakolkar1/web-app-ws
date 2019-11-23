@@ -5,7 +5,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.opti.shope.service.UserService;
@@ -27,7 +27,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		//configure http API endpoints
 		http.csrf().disable().authorizeRequests()
 		.antMatchers(HttpMethod.POST,SecurityConstants.SIGN_UP_URL).permitAll()
-		.anyRequest().authenticated().and().addFilter(getAuthenticationFilter());
+		.anyRequest().authenticated().and()
+		.addFilter(getAuthenticationFilter())
+		
+		//authorization for api
+		.addFilter(new AuthorizationFilter(authenticationManager()))
+		
+		//creating services session less(state-less) so that server will not maintain any session. 
+		.sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
 	}
 	//Sets the URL that determines if authentication is required
 	private AuthenticationFilter getAuthenticationFilter() throws Exception {
