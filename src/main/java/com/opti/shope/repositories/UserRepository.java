@@ -14,4 +14,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
 	
 	//check if record exist in table for given email
 	boolean existsByEmail(String email);
+	
+	//find user by public id
+	UserEntity findByUserId(String userId);
 }

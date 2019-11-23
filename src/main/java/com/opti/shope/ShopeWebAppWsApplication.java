@@ -15,5 +15,9 @@ public class ShopeWebAppWsApplication {
 	public BCryptPasswordEncoder getBcryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	@Bean
+	public SpringApplicationContext getContext() {
+		return new SpringApplicationContext();
+	}
 
 }

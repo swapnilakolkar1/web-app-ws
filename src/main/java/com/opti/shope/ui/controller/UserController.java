@@ -24,12 +24,12 @@ public class UserController {
 	
 	
 	@GetMapping
-	String getUserDetail() {
+	public String getUserDetail() {
 		return "getUserDetail";
 	}
 
 	@PostMapping
-	UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) {
+	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) {
 		UserRest userRest = new UserRest();
 		UserDto userDto = new UserDto();
 		BeanUtils.copyProperties(userDetailRequestModel, userDto);
@@ -41,13 +41,13 @@ public class UserController {
 	}
 
 	@PutMapping
-	String updateUserDetail() {
+	public String updateUserDetail() {
 		return "updateUserDetail";
 		
 	}
 
 	@DeleteMapping
-	String deleteUserDetail() {
+	public String deleteUserDetail() {
 		return "deleteUserDetail";
 	}
 
