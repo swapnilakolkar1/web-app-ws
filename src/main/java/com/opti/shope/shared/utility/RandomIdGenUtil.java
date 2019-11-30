@@ -1,4 +1,4 @@
-package com.opti.shope.shared.uility;
+package com.opti.shope.shared.utility;
 
 import java.security.SecureRandom;
 import java.util.Random;

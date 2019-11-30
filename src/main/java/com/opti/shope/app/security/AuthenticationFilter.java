@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,5 +60,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 		UserDto userObj=userSevice.getUser(userName);
 		response.setHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
 		response.setHeader("USERID", userObj.getUserId());
+	}
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException, ServletException {
+		response.setHeader("message",failed.getMessage());
+		response.setStatus(HttpStatus.FORBIDDEN.value());
+		
+		
 	}
 }

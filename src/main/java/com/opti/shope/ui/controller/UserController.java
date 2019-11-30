@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.opti.shope.service.UserService;
+import com.opti.shope.service.exception.UserServiceException;
 import com.opti.shope.shared.dto.UserDto;
+import com.opti.shope.shared.utility.ErrorMessages;
 import com.opti.shope.ui.model.request.UserDetailRequestModel;
 import com.opti.shope.ui.model.response.UserRest;
 
@@ -35,12 +37,18 @@ public class UserController {
 
 	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) {
+	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) throws Exception {
 		UserRest userRest = new UserRest();
 		UserDto userDto = new UserDto();
 		BeanUtils.copyProperties(userDetailRequestModel, userDto);
-		UserDto createdUser = userService.createUser(userDto);
-		BeanUtils.copyProperties(createdUser, userRest);
+		UserDto createdUser = null;
+		try {
+			createdUser = userService.createUser(userDto);
+			BeanUtils.copyProperties(createdUser, userRest);
+		} catch (Exception e) {
+			throw new UserServiceException(ErrorMessages.RECORD_ALREADY_EXISTED.getErrorMessage());
+		}
+		
 
 		return userRest;
 	}

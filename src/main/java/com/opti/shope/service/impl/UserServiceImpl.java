@@ -14,7 +14,7 @@ import com.opti.shope.io.entity.UserEntity;
 import com.opti.shope.repositories.UserRepository;
 import com.opti.shope.service.UserService;
 import com.opti.shope.shared.dto.UserDto;
-import com.opti.shope.shared.uility.RandomIdGenUtil;
+import com.opti.shope.shared.utility.RandomIdGenUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
