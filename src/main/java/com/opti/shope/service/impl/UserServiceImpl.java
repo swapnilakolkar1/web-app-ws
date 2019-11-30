@@ -16,8 +16,6 @@ import com.opti.shope.service.UserService;
 import com.opti.shope.shared.dto.UserDto;
 import com.opti.shope.shared.uility.RandomIdGenUtil;
 
-
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -26,48 +24,57 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	RandomIdGenUtil randomIdGenUtil;
-	
+
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
 	@Override
 	public UserDto createUser(UserDto userDto) {
-		
-		if(userRepository.existsByEmail(userDto.getEmail())) {
+
+		if (userRepository.existsByEmail(userDto.getEmail())) {
 			throw new RuntimeException("USER WITH SAME EMIL ID IS ALEADY EXISTS ,PLEASE TRY WITH ANOTHER EMAIL");
 		}
 		UserEntity userEntity = new UserEntity();
 		BeanUtils.copyProperties(userDto, userEntity);
 
-		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));	
-		
+		userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+
 		userEntity.setUserId(randomIdGenUtil.generateUserID(30));
-		
+
 		UserEntity storedUserDetail = userRepository.save(userEntity);
-		
+
 		UserDto createdUser = new UserDto();
 		BeanUtils.copyProperties(storedUserDetail, createdUser);
-		
+
 		return createdUser;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		UserEntity userEntity= userRepository.findByEmail(email);
-		if(userEntity==null)throw new UsernameNotFoundException(email);
-		return new User(email,userEntity.getEncryptedPassword(),new ArrayList<>());
+		UserEntity userEntity = userRepository.findByEmail(email);
+		if (userEntity == null)
+			throw new UsernameNotFoundException(email);
+		return new User(email, userEntity.getEncryptedPassword(), new ArrayList<>());
 	}
 
 	@Override
 	public UserDto getUser(String userEmail) {
-		UserEntity userEntity= userRepository.findByEmail(userEmail);
-		if(userEntity==null)throw new UsernameNotFoundException(userEmail);
-		UserDto returnObj=new UserDto();
+		UserEntity userEntity = userRepository.findByEmail(userEmail);
+		if (userEntity == null)
+			throw new UsernameNotFoundException(userEmail);
+		UserDto returnObj = new UserDto();
 		BeanUtils.copyProperties(userEntity, returnObj);
 		return returnObj;
 	}
 
-
-
+	@Override
+	public UserDto getUserDetailsById(String userPublicID) {
+		UserEntity userEntity = userRepository.findByUserId(userPublicID);
+		if (userEntity == null)
+			throw new UsernameNotFoundException(userPublicID);
+		UserDto returnObj = new UserDto();
+		BeanUtils.copyProperties(userEntity, returnObj);
+		return returnObj;
+	}
 
 }
