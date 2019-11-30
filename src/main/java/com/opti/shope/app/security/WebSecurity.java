@@ -32,7 +32,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		
 		//authorization for api
 		.addFilter(new AuthorizationFilter(authenticationManager()))
-		
 		//creating services session less(state-less) so that server will not maintain any session. 
 		.sessionManagement()
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
