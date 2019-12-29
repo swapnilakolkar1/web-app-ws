@@ -1,10 +1,12 @@
 package com.opti.shope.ui.model.request;
 
+
 public class UserDetailRequestModel {
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
+	private AddressDetailRequestModel address; 
 
 	public String getFirstName() {
 		return firstName;
@@ -36,5 +38,13 @@ public class UserDetailRequestModel {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public AddressDetailRequestModel getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressDetailRequestModel address) {
+		this.address = address;
 	}
 }

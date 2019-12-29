@@ -1,8 +1,12 @@
 package com.opti.shope.ui.controller;
 
-import org.springframework.beans.BeanUtils;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,16 +26,18 @@ import com.opti.shope.ui.model.response.UserRest;
 @RestController
 @RequestMapping("users")
 public class UserController {
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@Autowired
 	UserService userService;
-
+	ModelMapper modelmapper = new ModelMapper();
+	
 	@GetMapping(path = "/{userPublicId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
 	public UserRest getUserDetail(@PathVariable String userPublicId) {
 		UserRest userRest = new UserRest();
 		UserDto userDto = userService.getUserDetailsById(userPublicId);
-		BeanUtils.copyProperties(userDto, userRest);
+		modelmapper.map(userDto, userRest);
 		return userRest;
 	}
 
@@ -39,16 +45,21 @@ public class UserController {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) throws Exception {
 		UserRest userRest = new UserRest();
-		UserDto userDto = new UserDto();
-		BeanUtils.copyProperties(userDetailRequestModel, userDto);
+		
+		UserDto userDto = modelmapper.map(userDetailRequestModel, UserDto.class);
 		UserDto createdUser = null;
 		try {
 			createdUser = userService.createUser(userDto);
-			BeanUtils.copyProperties(createdUser, userRest);
-		} catch (Exception e) {
-			throw new UserServiceException(ErrorMessages.RECORD_ALREADY_EXISTED.getErrorMessage());
+			modelmapper.map(createdUser, userRest);
+		} 
+		catch(UserServiceException userException) {
+			userException.printStackTrace();
+			throw new UserServiceException(userException.getLocalizedMessage());
 		}
-		
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new UserServiceException(ErrorMessages.UNKNOWN_EXCEPION_OCCUED.getErrorMessage());
+		}
 
 		return userRest;
 	}
@@ -59,9 +70,13 @@ public class UserController {
 
 	}
 
-	@DeleteMapping
-	public String deleteUserDetail() {
-		return "deleteUserDetail";
+	@DeleteMapping(path = "/{userId}")
+	public String deleteUserDetail(@PathVariable String userId) {
+		if(StringUtils.isEmpty (userId)) {
+			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
+		}
+		
+		return userService.deleteUser(userId)?"deleted Successfullty":"Issue occured while deleting record";
 	}
 
 }

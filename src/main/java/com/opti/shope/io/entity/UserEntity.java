@@ -1,22 +1,31 @@
 package com.opti.shope.io.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-@Entity(name = "users")
+@Entity
+@Table(name = "app_users")
 public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = -6294297332112615875L;
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id")
 	private long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false,name = "UU_ID")
 	private String userId;
 	
 	@Column(nullable = false,length = 50)
@@ -25,15 +34,24 @@ public class UserEntity implements Serializable {
 	@Column(nullable = false,length = 50)
 	private String lastName;
 	
-	@Column(nullable = false,length = 110 ,unique = true)
+	@Column(nullable = false,length = 110 ,unique = true )
 	private String email;
 	
 	@Column(nullable = false)
 	private String encryptedPassword;
 	
 	private String emailVerificationToken;
+	
 	@Column(nullable = false)
 	private Boolean emailVerificationStatus=false;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id")
+	private AddressEntity address;
+	
+	@OneToMany(mappedBy = "userEntity")
+	private List<PassbookEntity> passbookEntity;
+	
 	public long getId() {
 		return id;
 	}
@@ -81,6 +99,19 @@ public class UserEntity implements Serializable {
 	}
 	public void setEmailVerificationStatus(Boolean emailVerificationStatus) {
 		this.emailVerificationStatus = emailVerificationStatus;
+	}
+	public AddressEntity getAddress() {
+		return address;
+	}
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+	public List<PassbookEntity> getPassbookEntity() {
+		return passbookEntity;
+	}
+	
+	public void setPassbookEntity(List <PassbookEntity> passbookEntity) {
+		this.passbookEntity = passbookEntity;
 	}
 	
 

@@ -1,7 +1,13 @@
 package com.opti.shope.ui.model.response;
 
+
 public class UserRest {
 	private String userId;
+	private String firstName;
+	private String lastName;
+	private String email;
+	private AddressRest address;
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -26,8 +32,10 @@ public class UserRest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	private String firstName;
-	private String lastName;
-	private String email;
-	
+	public AddressRest getAddress() {
+		return address;
+	}
+	public void setAddress(AddressRest address) {
+		this.address = address;
+	}	
 }

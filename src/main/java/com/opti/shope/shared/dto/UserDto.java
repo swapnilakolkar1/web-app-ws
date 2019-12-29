@@ -1,6 +1,7 @@
 package com.opti.shope.shared.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UserDto implements Serializable {
 
@@ -9,12 +10,14 @@ public class UserDto implements Serializable {
 	private String lastName;
 	private String email;
 	private String password;
-
 	private long id;
 	private String userId;
 	private String encryptedPassword;
 	private String emailVerificationToken;
 	private Boolean emailVerificationStatus=false;
+	private AddressDto address;
+	private List<TransactionDto> transactions;
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -68,6 +71,18 @@ public class UserDto implements Serializable {
 	}
 	public void setEmailVerificationToken(String emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
+	}
+	public AddressDto getAddress() {
+		return address;
+	}
+	public void setAddress(AddressDto address) {
+		this.address = address;
+	}
+	public List<TransactionDto> getTransactions() {
+		return transactions;
+	}
+	public void setTransactions(List<TransactionDto> transactions) {
+		this.transactions = transactions;
 	}
 
 	

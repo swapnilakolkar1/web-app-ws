@@ -14,13 +14,13 @@ public class CustomApplicationExceptionHandler {
 	@ExceptionHandler(value = {UserServiceException.class})
 	public ResponseEntity<Object> handleUserServiceExceptions(UserServiceException ex){
 		//Handles only UserServiceExceptions
-		ServicesException exception=new ServicesException(new Date(),ex.getMessage());
+		ServicesException exception=new ServicesException(new Date(),ex.toString(),HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.toString());
 		return new ResponseEntity<>(exception,new HttpHeaders(),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	@ExceptionHandler(value = {Exception.class})
 	public ResponseEntity<Object> handleOtherException(Exception ex){
 		//Handles only UserServiceExceptions
-		ServicesException exception=new ServicesException(new Date(),ex.getMessage());
+		ServicesException exception=new ServicesException(new Date(),ex.toString(),HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.toString());
 		return new ResponseEntity<>(exception,new HttpHeaders(),HttpStatus.INTERNAL_SERVER_ERROR);
 	
 		
