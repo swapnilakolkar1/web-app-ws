@@ -24,7 +24,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		String header = request.getHeader(SecurityConstants.HEADER_STRING);
+		String header = request.getHeader(SecurityConstants.AUTHORIZATION_STRING);
 		if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 			chain.doFilter(request, response);
 			return;
@@ -35,7 +35,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 	}
 
 	private UsernamePasswordAuthenticationToken getAuhentication(HttpServletRequest request) {
-		String token = request.getHeader(SecurityConstants.HEADER_STRING);
+		String token = request.getHeader(SecurityConstants.AUTHORIZATION_STRING);
 		if (token != null && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 			token = token.replace(SecurityConstants.TOKEN_PREFIX, "").trim();
 			String user = Jwts.parser().setSigningKey(SecurityConstants.getSecretToken()).parseClaimsJws(token).getBody()

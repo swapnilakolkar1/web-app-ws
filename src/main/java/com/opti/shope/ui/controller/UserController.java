@@ -1,6 +1,5 @@
 package com.opti.shope.ui.controller;
 
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +29,9 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	ModelMapper modelmapper = new ModelMapper();
-	
+
 	@GetMapping(path = "/{userPublicId}", produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
-					MediaType.APPLICATION_XML_VALUE })
+			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.TEXT_PLAIN_VALUE })
 	public UserRest getUserDetail(@PathVariable String userPublicId) {
 		UserRest userRest = new UserRest();
 		UserDto userDto = userService.getUserDetailsById(userPublicId);
@@ -45,18 +43,16 @@ public class UserController {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) throws Exception {
 		UserRest userRest = new UserRest();
-		
+
 		UserDto userDto = modelmapper.map(userDetailRequestModel, UserDto.class);
 		UserDto createdUser = null;
 		try {
 			createdUser = userService.createUser(userDto);
 			modelmapper.map(createdUser, userRest);
-		} 
-		catch(UserServiceException userException) {
+		} catch (UserServiceException userException) {
 			userException.printStackTrace();
 			throw new UserServiceException(userException.getLocalizedMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new UserServiceException(ErrorMessages.UNKNOWN_EXCEPION_OCCUED.getErrorMessage());
 		}
@@ -72,11 +68,11 @@ public class UserController {
 
 	@DeleteMapping(path = "/{userId}")
 	public String deleteUserDetail(@PathVariable String userId) {
-		if(StringUtils.isEmpty (userId)) {
+		if (StringUtils.isEmpty(userId)) {
 			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
 		}
-		
-		return userService.deleteUser(userId)?"deleted Successfullty":"Issue occured while deleting record";
+
+		return userService.deleteUser(userId) ? "deleted Successfullty" : "Issue occured while deleting record";
 	}
 
 }

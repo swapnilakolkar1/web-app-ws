@@ -58,8 +58,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 				.signWith(SignatureAlgorithm.HS512, SecurityConstants.getSecretToken()).compact();
 		UserService userSevice=SpringApplicationContext.getBean("userServiceImpl",UserService.class);
 		UserDto userObj=userSevice.getUser(userName);
-		response.setHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-		response.setHeader("USERID", userObj.getUserId());
+		response.setHeader(SecurityConstants.AUTHORIZATION_STRING, SecurityConstants.TOKEN_PREFIX + token);
+		response.setHeader(SecurityConstants.USER_ID_STRING, userObj.getUserId());
+		response.setHeader("Access-Control-Expose-Headers",SecurityConstants.AUTHORIZATION_STRING +","+SecurityConstants.USER_ID_STRING);
 	}
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
