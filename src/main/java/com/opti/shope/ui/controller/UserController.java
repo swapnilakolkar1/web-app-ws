@@ -4,7 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.opti.shope.service.UserService;
 import com.opti.shope.service.exception.UserServiceException;
@@ -30,17 +36,19 @@ public class UserController {
 	UserService userService;
 	ModelMapper modelmapper = new ModelMapper();
 
-	@GetMapping(path = "/{userPublicId}", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@GetMapping(path = "/getUserDetail/{userPublicId}", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.TEXT_PLAIN_VALUE })
 	public UserRest getUserDetail(@PathVariable String userPublicId) {
+		logger.info("UserController.getUserDetail for User public id" + userPublicId);
 		UserRest userRest = new UserRest();
 		UserDto userDto = userService.getUserDetailsById(userPublicId);
 		modelmapper.map(userDto, userRest);
 		return userRest;
 	}
 
-	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, consumes = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@PostMapping(path = "/createUser", produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE })
 	public UserRest createUserDetail(@RequestBody UserDetailRequestModel userDetailRequestModel) throws Exception {
 		UserRest userRest = new UserRest();
 
@@ -66,7 +74,7 @@ public class UserController {
 
 	}
 
-	@DeleteMapping(path = "/{userId}")
+	@DeleteMapping(path = "/deleteUser/{userId}")
 	public String deleteUserDetail(@PathVariable String userId) {
 		if (StringUtils.isEmpty(userId)) {
 			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
@@ -75,4 +83,39 @@ public class UserController {
 		return userService.deleteUser(userId) ? "deleted Successfullty" : "Issue occured while deleting record";
 	}
 
+	@PostMapping(path = "/updateUserProfilePic/{userPublicId}")
+	public String updateUserProfilePic(@PathVariable String userPublicId, @RequestParam("file") MultipartFile file) {
+		if (StringUtils.isEmpty(userPublicId)) {
+			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
+		}
+		if (file.isEmpty()) {
+			throw new UserServiceException(ErrorMessages.FILE_NOT_UPLOADED.getErrorMessage());
+		}
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+		if (fileName.contains("..")) {
+			throw new UserServiceException(ErrorMessages.FILE_NAME_INVALID.getErrorMessage());
+		}
+		if (!(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))) {
+			throw new UserServiceException(ErrorMessages.FILE_FORMAT_MUST_BE_PNG_JPG.getErrorMessage());
+		}
+		userService.updateUserProfilePic(userPublicId, file);
+		return "done";
+
+	}
+
+	@GetMapping(path = "/downloadUserProfilePic/{userPublicId}", consumes = { MediaType.TEXT_PLAIN_VALUE }, produces = {
+			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
+	public ResponseEntity<Resource> downloadUserProfilePic(@PathVariable String userPublicId) {
+		if (StringUtils.isEmpty(userPublicId)) {
+			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
+		}
+		UserDto userDto = userService.getUserDetailsById(userPublicId);
+
+		return ResponseEntity.ok().
+				contentLength(userDto.getProfilePic().length)
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"image.png\"")
+				.body(new ByteArrayResource(userDto.getProfilePic()));
+	}
 }

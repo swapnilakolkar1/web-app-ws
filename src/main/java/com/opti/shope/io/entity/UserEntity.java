@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -51,6 +52,12 @@ public class UserEntity implements Serializable {
 	
 	@OneToMany(mappedBy = "userEntity")
 	private List<PassbookEntity> passbookEntity;
+	
+	@Lob
+	private byte profilePic[];
+	
+	@Column(length = 10)
+	private String profilePicFileFormat;
 	
 	public long getId() {
 		return id;
@@ -112,6 +119,18 @@ public class UserEntity implements Serializable {
 	
 	public void setPassbookEntity(List <PassbookEntity> passbookEntity) {
 		this.passbookEntity = passbookEntity;
+	}
+	public byte[] getProfilePic() {
+		return profilePic;
+	}
+	public void setProfilePic(byte[] profilePic) {
+		this.profilePic = profilePic;
+	}
+	public String getProfilePicFileFormat() {
+		return profilePicFileFormat;
+	}
+	public void setProfilePicFileFormat(String profilePicFileFormat) {
+		this.profilePicFileFormat = profilePicFileFormat;
 	}
 	
 

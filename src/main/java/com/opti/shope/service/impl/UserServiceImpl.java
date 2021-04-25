@@ -1,5 +1,6 @@
 package com.opti.shope.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.modelmapper.ModelMapper;
@@ -9,12 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.opti.shope.io.entity.UserEntity;
 import com.opti.shope.repositories.UserRepository;
 import com.opti.shope.service.UserService;
 import com.opti.shope.service.exception.UserServiceException;
 import com.opti.shope.shared.dto.UserDto;
+import com.opti.shope.shared.utility.ErrorMessages;
 import com.opti.shope.shared.utility.RandomIdGenUtil;
 
 @Service
@@ -95,6 +98,22 @@ public class UserServiceImpl implements UserService {
 			throw new UsernameNotFoundException(userPublicID);
 		userRepository.delete(userEntity);
 		return true;
+	}
+
+	@Override
+	public boolean updateUserProfilePic(String userPublicId,MultipartFile file){
+		UserEntity userEntity  = userRepository.findByUserId(userPublicId);
+		if (userEntity == null)
+			throw new UsernameNotFoundException(userPublicId);
+		try {
+			userEntity.setProfilePic(file.getBytes());
+			userEntity.setProfilePicFileFormat(file.getContentType());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new UserServiceException(ErrorMessages.UNKNOWN_EXCEPION_OCCUED.getErrorMessage());
+		}
+		userRepository.save(userEntity);
+		return false;
 	}
 
 }
