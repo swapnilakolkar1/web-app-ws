@@ -101,19 +101,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean updateUserProfilePic(String userPublicId,MultipartFile file){
+	public boolean updateUserProfilePic(String userPublicId,MultipartFile file ,String fileName){
 		UserEntity userEntity  = userRepository.findByUserId(userPublicId);
 		if (userEntity == null)
 			throw new UsernameNotFoundException(userPublicId);
 		try {
 			userEntity.setProfilePic(file.getBytes());
-			userEntity.setProfilePicFileFormat(file.getContentType());
+			userEntity.setProfilePicFileName(fileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new UserServiceException(ErrorMessages.UNKNOWN_EXCEPION_OCCUED.getErrorMessage());
 		}
 		userRepository.save(userEntity);
-		return false;
+		return true;
 	}
 
 }

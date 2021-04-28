@@ -9,7 +9,7 @@ public class SecurityConstants {
 	public static final String AUTHORIZATION_STRING = "Authorization";
 	public static final String USER_ID_STRING = "UserId";
 	
-	public static final String SIGN_UP_URL = "/users";
+	public static final String SIGN_UP_URL = "/users/createUser";
 	public static final String TOKEN_SECRET = "TOKEN_SECRET";
 	public static final AppProperties appProperties = SpringApplicationContext.getBean("appProperties",
 			AppProperties.class);

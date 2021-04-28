@@ -56,8 +56,8 @@ public class UserEntity implements Serializable {
 	@Lob
 	private byte profilePic[];
 	
-	@Column(length = 10)
-	private String profilePicFileFormat;
+	@Column(length = 40)
+	private String profilePicFileName;
 	
 	public long getId() {
 		return id;
@@ -126,11 +126,11 @@ public class UserEntity implements Serializable {
 	public void setProfilePic(byte[] profilePic) {
 		this.profilePic = profilePic;
 	}
-	public String getProfilePicFileFormat() {
-		return profilePicFileFormat;
+	public String getProfilePicFileName() {
+		return profilePicFileName;
 	}
-	public void setProfilePicFileFormat(String profilePicFileFormat) {
-		this.profilePicFileFormat = profilePicFileFormat;
+	public void setProfilePicFileName(String profilePicFileName) {
+		this.profilePicFileName = profilePicFileName;
 	}
 	
 

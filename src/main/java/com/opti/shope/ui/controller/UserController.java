@@ -1,5 +1,7 @@
 package com.opti.shope.ui.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,23 +101,23 @@ public class UserController {
 		if (!(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))) {
 			throw new UserServiceException(ErrorMessages.FILE_FORMAT_MUST_BE_PNG_JPG.getErrorMessage());
 		}
-		userService.updateUserProfilePic(userPublicId, file);
+		userService.updateUserProfilePic(userPublicId, file,fileName);
 		return "done";
 
 	}
 
-	@GetMapping(path = "/downloadUserProfilePic/{userPublicId}", consumes = { MediaType.TEXT_PLAIN_VALUE }, produces = {
-			MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
-	public ResponseEntity<Resource> downloadUserProfilePic(@PathVariable String userPublicId) {
+	@GetMapping(path = "/downloadUserProfilePic/{userPublicId}",
+			consumes = { MediaType.TEXT_PLAIN_VALUE }, 
+			produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
+	public ResponseEntity<byte[]> downloadUserProfilePic(@PathVariable String userPublicId,HttpServletRequest request) {
 		if (StringUtils.isEmpty(userPublicId)) {
 			throw new UserServiceException(ErrorMessages.PROVIDE_USER_ID.getErrorMessage());
 		}
 		UserDto userDto = userService.getUserDetailsById(userPublicId);
-
-		return ResponseEntity.ok().
-				contentLength(userDto.getProfilePic().length)
-				.contentType(MediaType.APPLICATION_OCTET_STREAM)
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"image.png\"")
-				.body(new ByteArrayResource(userDto.getProfilePic()));
+		String mimeType=request.getServletContext().getMimeType(userDto.getProfilePicFileName());
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(mimeType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;fileName="+userDto.getProfilePicFileName())
+				.body(userDto.getProfilePic());
 	}
 }

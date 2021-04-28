@@ -10,5 +10,5 @@ public interface UserService extends UserDetailsService{
 	UserDto getUser(String email);
 	UserDto getUserDetailsById(String userPublicID);
 	boolean deleteUser(String userPublicID);
-	boolean updateUserProfilePic(String userPublicId,MultipartFile file);
+	boolean updateUserProfilePic(String userPublicId,MultipartFile file,String fileName);
 }
