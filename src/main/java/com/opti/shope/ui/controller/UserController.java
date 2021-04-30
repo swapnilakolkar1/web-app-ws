@@ -115,6 +115,9 @@ public class UserController {
 		}
 		UserDto userDto = userService.getUserDetailsById(userPublicId);
 		String mimeType=request.getServletContext().getMimeType(userDto.getProfilePicFileName());
+		if(userDto.getProfilePicFileName() ==null) {
+			return ResponseEntity.noContent().build();
+		}
 		return ResponseEntity.ok()
 				.contentType(MediaType.parseMediaType(mimeType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;fileName="+userDto.getProfilePicFileName())
