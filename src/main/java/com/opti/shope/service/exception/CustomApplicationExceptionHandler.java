@@ -19,7 +19,7 @@ public class CustomApplicationExceptionHandler {
 	}
 	@ExceptionHandler(value = {Exception.class})
 	public ResponseEntity<Object> handleOtherException(Exception ex){
-		//Handles only UserServiceExceptions
+		//Handles other exception
 		ServicesException exception=new ServicesException(new Date(),ex.toString(),HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.toString());
 		return new ResponseEntity<>(exception,new HttpHeaders(),HttpStatus.INTERNAL_SERVER_ERROR);
 	
